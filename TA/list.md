@@ -74,7 +74,7 @@ Notat: Kommunikasjon gikk/går på engelsk.
 
 ****
 
-**PG2200 - XNA spillprogrammering - 4 - Marius Brendmoe
+**PG2200 - XNA spillprogrammering** - 4 - Marius Brendmoe
 
 * Bistand
 * Repetisjonsforelesninger?
