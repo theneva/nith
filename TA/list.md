@@ -10,12 +10,11 @@ Oppgavetyper:
 
 Format:
 
-`
+```
 emnekode - norsk emnetittel - estimert antall stillinger - foreleser
 
 * oppgaver
 * som
 * punktliste
-
-`
+```
 
