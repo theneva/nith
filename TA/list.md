@@ -111,8 +111,6 @@ Notat: Kommunikasjon gikk/går på engelsk.
 * Bistand
 * Sensur
 
-****
-
 ### Høst 2013
 
 **Notat: dette semesteret ble det innført tre dedikerte øvingsrom, i tillegg til vrimle. Dette genererte et behov for minst 5 veiledere per emne på 1. trinn.**
@@ -161,7 +159,7 @@ Notat: Simen Bekkhus (som tok emnet samtidig) veiledet, som åpnet for å benytte 
 
 ****
 
-** PG3300 Programvarearkitektur** - 1 - Kristian Ravndal
+**PG3300 Programvarearkitektur** - 1 - Kristian Ravndal
 
 Notat: Det ble ikke satt inn noen veileder i dette emnet da det gikk parallelt med forelesninger i BU5100 Entreprenørskap, som er felles for hele 3. trinn (altså alle som har hatt emnet før). Emnet er såpass tungt at vi ikke ville sette inn noen som tar emnet samtidig som veileder.
 
