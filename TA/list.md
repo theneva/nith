@@ -13,7 +13,7 @@
 
 ## Format
 
-***emnekode [-] norsk emnetittel>*** - *estimert antall stillinger* - *navn på foreleser*
+***emnekode [-] norsk emnetittel*** - *estimert antall stillinger* - *navn på foreleser*
 
 * oppgaver
 * som
