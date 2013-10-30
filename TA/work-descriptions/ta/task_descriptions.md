@@ -35,3 +35,7 @@ Innebærer å fungere som medsensor og sparringspartner for ordinær sensor under m
 **Sensur**
 
 Innebærer å telle opp poeng ved avkrysningseksamner. Så langt bare gjennomført i TK2100 Datasikkerhet og TK1100 Digital teknologi, men kan utvides til i hvert fall DB1100 Databaser.
+
+**Statusmøte**
+
+Deltakelse på ukentlig oppsummering av foregående uke og gjennomgang av inneværende. Så langt kun benyttet i DB1100.

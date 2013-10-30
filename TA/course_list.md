@@ -10,6 +10,7 @@
 * Repetisjonsforelesninger: Gjennomføring av ukentlige repetisjonsforelesninger
 * Forskningsassistanse
 * Medsensoring: Bistand av foreleser under muntlig eksamen
+* Statusmøter: Ukentlig oppsummering og gjennomgang
 
 ## Format
 
@@ -128,6 +129,7 @@ Notat: Kommunikasjon gikk/går på engelsk.
 
 * Bistand
 * Repetisjonsforelesninger
+* Statusmøter
 
 ****
 
