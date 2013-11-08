@@ -1,22 +1,17 @@
 #include "binary_search_tree.h"
 
-void insert_value(Node *root, char *new_value, int line_number)
+void insert_value(Node **root_pointer, char *new_value, int line_number)
 {
 	// Set up a new node
-	Node *new_node = malloc(sizeof(Node));
+	Node *new_node;
+	initialise_node(&new_node, new_value, line_number);
 
-	new_node->value = new_value;
-
-	insert_node(root, new_node, line_number);
+	insert_node(root_pointer, new_node);
 }
 
-void insert_node(Node *root, Node *new_node, int line_number)
+void insert_node(Node **root_pointer, Node *new_node)
 {
-	if (root == NULL)
-	{
-		root = initialise_node(new_node, line_number);
-		return;
-	}
+	Node *root = *root_pointer;
 
 	int difference = strcasecmp(new_node->value, root->value);
 
@@ -24,27 +19,16 @@ void insert_node(Node *root, Node *new_node, int line_number)
 	if (difference == 0)
 	{
 		DEBUG("%s already exists.\n", new_node->value);
+		
+		/*
+		realloc_line_numbers_if_necessary(root_pointer);
 
-		root->line_numbers[root->occurrences++] = line_number;
-
-		// Double the size of the array whenever if necessary
-		int line_number_array_capacity = sizeof(root->line_numbers) / sizeof(int);
-		if (line_number_array_capacity < root->occurrences / 2)
-		{
-			int new_size = line_number_array_capacity * 2;
-			
-			int *result_of_realloc = realloc(root->line_numbers, new_size);
-
-			if (result_of_realloc != NULL)
-				DEBUG("Line number array reallocated to %d.\n", new_size);
-			else
-				DEBUG("Something went wrong when reallocating the line number array to %d.\n", line_number_array_capacity);
-		}
+		// Line number has already been set
+		root->line_numbers[root->occurrences++] = new_node->line_numbers[0];
+		*/
 
 		return;
 	}
-
-
 
 	// If the new node has a lower value than the current root...
 	if (difference < 0)
@@ -52,9 +36,9 @@ void insert_node(Node *root, Node *new_node, int line_number)
 		DEBUG("%s was less than %s!\n", new_node->value, root->value);
 
 		if (root->left == NULL)
-			root->left = initialise_node(new_node, line_number);
+			root->left = new_node;
 		else
-			insert_node(root->left, new_node, line_number);
+			insert_node(&root->left, new_node);
 	}
 
 	// If the new node has a greater value than the current root...
@@ -63,18 +47,54 @@ void insert_node(Node *root, Node *new_node, int line_number)
 		DEBUG("%s was greater than %s!\n", new_node->value, root->value);
 		
 		if (root->right == NULL)
-			root->right = initialise_node(new_node, line_number);
+			root->right = new_node;
 		else
-			insert_node(root->right, new_node, line_number);
+			insert_node(&root->right, new_node);
 	}
 }
 
-Node* initialise_node(Node *node, int line_number)
+void realloc_line_numbers_if_necessary(Node **root_pointer)
 {
-	node->line_numbers[0] = line_number;
-	node->occurrences = 1;
+	Node *root = *root_pointer;
 
-	return node;
+	// Is the array not half full yet?
+	if (root->line_numbers_length > root->occurrences * 2)
+	{
+		return;
+	}
+
+	int new_length = root->line_numbers_length * 2;
+
+	DEBUG("NEW LENGTH: %d\n", new_length);
+
+	int *result_of_realloc = realloc(root->line_numbers, new_length);
+
+	if (result_of_realloc != NULL)
+	{
+		root->line_numbers_length = new_length;
+		root->line_numbers = result_of_realloc;
+		DEBUG("Line number array reallocated to %d.\n", root->line_numbers_length);
+	}
+	else
+	{
+		DEBUG("Something went wrong when reallocating the line number array to %d.\n", new_length);
+	}
+}
+
+void initialise_node(Node **node_pointer, char *value, int line_number)
+{
+	Node *node = malloc(sizeof(Node));
+
+	int default_capacity = 10;
+
+	node->value = value;
+	node->occurrences = 1;
+	
+	node->line_numbers = malloc(default_capacity * sizeof(int));
+	node->line_numbers_length = default_capacity;
+	node->line_numbers[0] = line_number;
+
+	*node_pointer = node;
 }
 
 Node* find_node(Node *current, char *target)
@@ -110,11 +130,11 @@ void print_node(Node *node)
 	int plural = node->occurrences == 1 ? 0 : 1;
 	
 	printf("Node:\n{\n\tvalue: %s,\n\toccurs %d %s on %s:\n\t{\n",
-			node->value,
-			node->occurrences,
-			plural ? "times" : "time",
-			plural ? "lines" : "line"
-	);
+		node->value,
+		node->occurrences,
+		plural ? "times" : "time",
+		plural ? "lines" : "line"
+		);
 
 	printf("\t\t%d", node->line_numbers[0]);
 

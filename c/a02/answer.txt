@@ -1,0 +1,30 @@
+Eek. Tekstfil med gjennomgang og enkel forklaring av valg: A02/walkthrough.txt.
+
+makefile har støtte for "make clean" og "make".
+
+Har ikke implementert setninger som beskriver hva som ligger hvor, fordi alle items blir presentert som en naturlig del av valgene spilleren får i hvert enkelt rom.
+
+Gikk ikke helt overboard med JSON-filer og alt jeg så for meg, og tror det kanskje er en god ting: kodebasen er vesentlig mindre enn den ville vært om jeg måtte skrevet min egen JSON-parser.
+
+Ingen kopier av structs blir sendt rundt om kring i koden -- alt er minneadresser.
+
+valgrind og jeg enes om at alt minne blir frigjort.
+
+ 
+
+Enkel romplan:
+
+Bedroom <--> Wardrobe
+
+^
+|
+v
+Bathroom
+^
+|
+v
+Living room <-> outside
+^
+|
+v
+Kitchen
