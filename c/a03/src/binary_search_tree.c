@@ -101,27 +101,28 @@ Node* find_node(Node *current, char *target)
 void print_node(Node *node)
 {
 	if (node == NULL)
-		printf("null\n");
-	else
 	{
-		// 0 is kind of the same as false, right?
-		int plural = node->occurrences == 1 ? 0 : 1;
-		
-		printf("Node:\n{\n\tvalue: %s,\n\toccurs %d %s on %s:\n\t{\n",
-				node->value,
-				node->occurrences,
-				plural ? "times" : "time",
-				plural ? "lines" : "line"
-		);
-
-		printf("\t\t%d", node->line_numbers[0]);
-
-		int i;
-		for(i = 1; i < node->occurrences; i++)
-		{
-			printf(", %d", node->line_numbers[i]);
-		}
-
-		printf("\n\t}\n}\n");
+		printf("null\n");
+		return;
 	}
+	
+	// 0 is kind of the same as false, right?
+	int plural = node->occurrences == 1 ? 0 : 1;
+	
+	printf("Node:\n{\n\tvalue: %s,\n\toccurs %d %s on %s:\n\t{\n",
+			node->value,
+			node->occurrences,
+			plural ? "times" : "time",
+			plural ? "lines" : "line"
+	);
+
+	printf("\t\t%d", node->line_numbers[0]);
+
+	int i;
+	for(i = 1; i < node->occurrences; i++)
+	{
+		printf(", %d", node->line_numbers[i]);
+	}
+
+	printf("\n\t}\n}\n");
 }

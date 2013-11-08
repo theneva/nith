@@ -16,7 +16,7 @@ int main(void)
 		DEBUG("[%s] was opened!\n", filename);
 	} else {
 		DEBUG("[%s] could not be opened.\n", filename);
-		return;
+		return -1;
 	}
 	
 	insert_value(root, "zzz", 1);
@@ -35,7 +35,7 @@ int main(void)
 	printf("\n");
 	print_node(find_node(root, "world"));
 	printf("\n");
-	// print_node(find_node(root, "mumblemumble")); // doesn't exist
+	print_node(find_node(root, "mumblemumble")); // doesn't exist
 	printf("\n");
 	print_node(find_node(root, "ac"));
 
