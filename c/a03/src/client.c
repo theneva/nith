@@ -3,10 +3,21 @@
 int main(void)
 {
 	Node *root = malloc(sizeof(Node));
-
 	root->value = "hello";
 	
 	print_node(root);
+
+	const char *filename = "pg3400.txt";
+	const char *mode = "r";
+
+	FILE *book = fopen(filename, mode);
+
+	if (book) { // was able to read
+		DEBUG("[%s] was opened!\n", filename);
+	} else {
+		DEBUG("[%s] could not be opened.\n", filename);
+		return;
+	}
 	
 	insert_value(root, "zzz", 1);
 	insert_value(root, "world", 2);
@@ -24,7 +35,7 @@ int main(void)
 	printf("\n");
 	print_node(find_node(root, "world"));
 	printf("\n");
-	print_node(find_node(root, "mumblemumble")); // doesn't exist
+	// print_node(find_node(root, "mumblemumble")); // doesn't exist
 	printf("\n");
 	print_node(find_node(root, "ac"));
 

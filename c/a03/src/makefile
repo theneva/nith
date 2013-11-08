@@ -4,7 +4,7 @@ SHELL = /bin/sh
 
 CC = gcc
 
-CFLAGS = -std=c11 -Wall -Werror
+CFLAGS = -std=c11 -Wall -Werror -DIS_DEBUG
 
 EXECUTABLE = client
 
