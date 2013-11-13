@@ -1,0 +1,22 @@
+This is a simple walkthrough for the game.
+
+I didn't implement any kind of combined events aside from having to get your body temperature and awakeness high enough before going outside via the living room. I believe I prove that I know how to play around with memory with the code base as it is, so adding more functionality seems unnecessary. I would probably implement a kind of prerequisite item in the Item struct, and only display the item as an option if the room did not have the prerequisite item anymore.
+
+In order to win, you need to get your awakeness and body temperature to at least 100 %. With this implementation, the only way to win is if you end up with 101 % of each, which can only be achieved through using every item except for the TV, which does nothing.
+
+Please don't type in anything except numbers as the option selection isn't validated.
+
+How to win:
+PREREQUISITE) Have Wine installed and/or run the game with "path/to/game force"
+0) You start out in the bedroom. Put the clothes on.
+1) Head over to the wardrobe and put the scarf on. Go back to the bedroom.
+2) Go to the bathroom.
+3) Take the Aspirin.
+4) Take a shower.
+5) Move to the living room.
+6) Move to the kitchen.
+7) Drink the coffee.
+8) Go back to the living room.
+9) Go outside.
+
+Yay.
