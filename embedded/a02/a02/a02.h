@@ -54,4 +54,3 @@
 
 #define enemy_width_shrinking 5
 #define enemy_height_shrinking 5
-
