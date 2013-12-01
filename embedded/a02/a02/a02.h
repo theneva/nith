@@ -9,7 +9,7 @@
 #define pin_joystick_y A4
 #define pin_joystick_sw A5
 
-#define screen_upper_limit 11
+#define screen_upper_limit 13
 
 // Colors.
 #define foreground_r 0
@@ -27,6 +27,9 @@
 // Game stuff.
 #define state_playing 0
 #define state_game_over 1
+
+// Score stuff.
+#define score_charray_length 4
 
 // Paddle stuff.
 #define paddle_width 20

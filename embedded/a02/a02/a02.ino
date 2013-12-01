@@ -10,7 +10,8 @@ short screen_width, screen_height;
 // Game stuff.
 int state;
 int score, score_previous, high_score;
-char score_as_charray[4], old_score_as_charray[4];
+char score_as_charray[score_charray_length], score_previous_as_charray[score_charray_length];
+short score_number_offset;
 
 // Paddle stuff.
 short paddle_x = (screen_width / 2) - (paddle_x / 2);
@@ -39,8 +40,14 @@ void setup()
   screen_width = screen.width();
   screen_height = screen.height();
 
-  // For the score.
+  score_number_offset = screen_width - 25;
+
+  // Display the score label.
   screen.setTextSize(1);
+  screen.stroke(text_r, text_g, text_b);
+  screen.text("score: ", screen_width - 60, 0);
+
+  screen.stroke(background_r, background_g, background_b);
 
   // Dis where it's at, yo.
   paddle_y = screen_height - (paddle_height * 2);
@@ -54,14 +61,17 @@ void setup()
 }
 
 void loop()
-{ 
-  if (state == state_playing)
+{
+  switch (state)
   {
-    update_playing();
-  }
-  else if (state == state_game_over)
-  {
-    update_game_over();
+  case state_playing: 
+    update_playing(); 
+    break;
+  case state_game_over: 
+    update_game_over(); 
+    break;
+  default: 
+    exit(-1);
   }
 }
 
@@ -69,17 +79,9 @@ void loop()
 
 void update_playing()
 {
-  do_movement();
+  update_player();  
 
   update_enemy();
-
-  if (stick_is_down())
-  {
-    if (!bullet_exists)
-    {
-      shoot();
-    }
-  }
 
   if (bullet_exists)
   {
@@ -91,38 +93,63 @@ void update_playing()
     set_game_over();
   }
 
-  old_score = score;
-  score = millis() / 1000;
-  refresh_score();
+  update_score();
 
   // Slow down, son.
   delay(6);
 }
 
+void update_player()
+{
+  move_player();
+  if (stick_is_down())
+  {
+    if (!bullet_exists)
+    {
+      shoot();
+    }
+  }
+}
+
+void update_score()
+{
+  // Update the score value.
+  score_previous = score;
+  score = millis() / 1000;
+
+  if (score != score_previous) 
+  {
+    refresh_score();
+  }
+}
+
 void refresh_score()
 {
+  // Get a text representation of both scores.
+  String(score_previous).toCharArray(score_previous_as_charray, score_charray_length);
+  String(score).toCharArray(score_as_charray, score_charray_length);
+
   // Erase the previous score.
   screen.stroke(background_r, background_g, background_b);
-  
-  // Get a text representation of the score.
-  String(score).toCharArray(score_as_charray, 4);
-  
-  // Print the score.
-  screen.stroke(text_r, text_g, text_b);
-  screen.text("score: ", screen_width - 60, 0);
+  screen.text(score_previous_as_charray, score_number_offset, 0);
 
-  screen.text(score_as_charray, screen_width - 25, 0);
+  // Display the new score.
+  screen.stroke(text_r, text_g, text_b);
+
+  screen.text(score_as_charray, score_number_offset, 0);
 
   // Reset the borders to the foreground color.
-  screen.stroke(background_r, background_g, background_b); 
+  screen.stroke(background_r, background_g, background_b);  
 }
 
 void update_game_over()
 {
-  
+
 }
 
-void do_movement()
+// ========================================================================
+
+void move_player()
 {
   if (paddle_x != paddle_x_previous)
   {
@@ -214,7 +241,7 @@ void shoot()
 
 void update_bullet()
 {
-  check_bullet_collision(); 
+  check_bullet_collision();
   move_bullet();
 }
 
@@ -235,8 +262,6 @@ void check_bullet_collision()
 
 void move_bullet()
 {
-  check_bullet_collision();
-
   bullet_y -= bullet_speed;
   refresh_bullet();
   bullet_y_previous = bullet_y;
@@ -244,11 +269,13 @@ void move_bullet()
 
 void refresh_bullet()
 {
+  // Erase the existing bullet.
   setBackgroundColor();
   screen.rect(bullet_x, bullet_y_previous, bullet_width, bullet_height);
 
   if (!bullet_exists) return;
 
+  // Draw the new bullet.
   setForegroundColor();
   screen.rect(bullet_x, bullet_y, bullet_width, bullet_height);
 }
@@ -293,14 +320,15 @@ void refresh_enemy()
 
 boolean enemy_is_hit()
 {
+  // This compensates for how the bullet moves (bullet speed) pixels at a time. Please don't ask. :(
   return bullet_x >= enemy_x && bullet_x + bullet_width <= enemy_x + enemy_width
-    && bullet_y >= enemy_y && bullet_y + bullet_height <= enemy_y + enemy_height;
+    && (bullet_y >= enemy_y || bullet_y - bullet_speed >= enemy_y)
+    && (bullet_y + bullet_height <= enemy_y + enemy_height || bullet_y - bullet_speed + bullet_height <= enemy_y + enemy_height);
 }
 
 void set_game_over()
 {
-
+  state = state_game_over;
 }
-
 
 
