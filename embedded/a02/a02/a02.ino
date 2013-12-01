@@ -1,5 +1,6 @@
 #include <TFT.h>
 #include <SPI.h>
+#include <SD.h>
 
 #include "a02.h"
 
@@ -39,6 +40,44 @@ byte enemy_width, enemy_height;
 void setup()
 {
   Serial.begin(9600);
+
+  // Read the high score from the SD card.
+  pinMode(10, OUTPUT);
+  pinMode(pin_sd_cs, OUTPUT);
+  if (!SD.begin(pin_sd_cs))
+  {
+    Serial.println("Failed to initialize the SD card.");
+    return;
+  }
+
+  char *file_path = "scores.txt";
+
+  File file_high_score = SD.open(file_path, FILE_WRITE);
+
+  if (file_high_score)
+  {
+    if (SD.exists(file_path))
+    {
+      // Get the existing high score.
+      String high_score_as_string = file_high_score.readStringUntil('\n');
+      high_score_as_string.toCharArray(high_score_as_charray, score_charray_length);
+      high_score = atoi(high_score_as_charray);
+    }
+    else
+    {
+      // Default high score to 999
+      high_score = 999;
+      file_high_score.println("999");
+    }
+    
+    file_high_score.close();
+  }
+  else
+  {
+    Serial.print("Could not open the file ");
+    Serial.println(file_path);
+    return;
+  }
 
   // Set up the screen.
   screen.begin();
@@ -98,7 +137,7 @@ void set_up_playing()
   enemy_height = enemy_height_default;
 
   reset_enemy();
-  
+
   current_game_start_millis = millis();
 
   state = state_playing;
@@ -172,7 +211,7 @@ void update_score()
   // Update the score value. Score is as simple as millis() / 100.
   score_previous = score;
   score = (millis() - current_game_start_millis) / 100;
-  
+
   if (score != score_previous) 
   {
     refresh_score();
@@ -376,6 +415,10 @@ boolean enemy_is_hit()
     && (bullet_y >= enemy_y || bullet_y - bullet_speed >= enemy_y)
     && (bullet_y + bullet_height <= enemy_y + enemy_height || bullet_y - bullet_speed + bullet_height <= enemy_y + enemy_height);
 }
+
+
+
+
 
 
 

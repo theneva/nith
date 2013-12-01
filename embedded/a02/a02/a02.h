@@ -5,6 +5,8 @@
 #define pin_screen_dc 9
 #define pin_screen_res 8
 
+#define pin_sd_cs 4
+
 #define pin_joystick_x A3 
 #define pin_joystick_y A4
 #define pin_joystick_sw A5
