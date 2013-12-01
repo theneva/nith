@@ -12,19 +12,23 @@ short screen_width, screen_height;
 byte state;
 short score, score_previous, high_score;
 
-char *file_path = "scores.txt";
+// The path to the file containing the high score.
+char *file_path = "score.txt";
 
+// Time time at which the current game was started.
 long current_game_start_millis = 0;
 
+// Character arrays for each score so they can be printed to the screen.
 char score_as_charray[score_charray_length],
 score_previous_as_charray[score_charray_length],
 high_score_as_charray[score_charray_length];
 
+// Offsets for printing to screen
 short score_number_offset;
 short score_text_offset;
 
 // Paddle stuff.
-short paddle_x = (screen_width / 2) - (paddle_x / 2);
+short paddle_x;
 short paddle_x_previous = -1;
 short paddle_y;
 
@@ -41,10 +45,12 @@ byte enemy_width, enemy_height;
 
 void setup()
 {
+  // Yeah...
   Serial.begin(9600);
 
-  // Read the high score from the SD card.
-  pinMode(10, OUTPUT);
+  /*
+   * Read the high score from the SD card.
+   */
   pinMode(pin_sd_cs, OUTPUT);
   if (!SD.begin(pin_sd_cs))
   {
@@ -52,6 +58,7 @@ void setup()
     return;
   }
 
+  // The file containing the high score.
   File file_high_score;
 
   if (SD.exists(file_path))
@@ -68,7 +75,7 @@ void setup()
     Serial.print("High score read: ");
     Serial.println(high_score);
     
-    // Make sure the file is formatted properly. If not, reset it.
+    // Make sure the (first line of the) file is formatted properly. If not, reset it to default value.
     if (high_score == 0)
     {
       SD.remove(file_path);
@@ -79,7 +86,7 @@ void setup()
   }
   else
   {
-    Serial.println("File did not exist. Creating it with default high score default_high_score...");
+    Serial.println("File did not exist. Creating it with default high score 999...");
         
     file_high_score = SD.open(file_path, FILE_WRITE);
     
@@ -105,6 +112,7 @@ void setup()
 
 void loop()
 {
+  // Fairly easy to add more states.
   switch (state)
   {
   case state_playing: 
@@ -139,6 +147,7 @@ void set_up_playing()
   String(score_previous).toCharArray(score_previous_as_charray, score_charray_length);
 
   // Dis where it's at, yo.
+  paddle_x = (screen_width / 2) - (paddle_x / 2);
   paddle_y = screen_height - (paddle_height * 2);
 
   reset_bullet();
@@ -442,5 +451,4 @@ boolean enemy_is_hit()
     && (bullet_y >= enemy_y || bullet_y - bullet_speed >= enemy_y)
     && (bullet_y + bullet_height <= enemy_y + enemy_height || bullet_y - bullet_speed + bullet_height <= enemy_y + enemy_height);
 }
-
 
