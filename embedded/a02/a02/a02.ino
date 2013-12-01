@@ -8,10 +8,17 @@ TFT screen = TFT(pin_screen_cs, pin_screen_dc, pin_screen_res);
 short screen_width, screen_height;
 
 // Game stuff.
-int state;
-int score, score_previous, high_score;
-char score_as_charray[score_charray_length], score_previous_as_charray[score_charray_length];
+byte state;
+short score, score_previous, high_score = 12; // TODO don't set this manually.
+
+long current_game_start_millis = 0;
+
+char score_as_charray[score_charray_length],
+score_previous_as_charray[score_charray_length],
+high_score_as_charray[score_charray_length];
+
 short score_number_offset;
+short score_text_offset;
 
 // Paddle stuff.
 short paddle_x = (screen_width / 2) - (paddle_x / 2);
@@ -27,7 +34,7 @@ short bullet_x, bullet_y, bullet_y_previous;
 
 // Enemy stuff.
 short enemy_x, enemy_y, enemy_x_previous;
-byte enemy_width = 40, enemy_height = 40;
+byte enemy_width, enemy_height;
 
 void setup()
 {
@@ -40,24 +47,10 @@ void setup()
   screen_width = screen.width();
   screen_height = screen.height();
 
-  score_number_offset = screen_width - 25;
+  score_text_offset = screen_width - 60;   // magic
+  score_number_offset = screen_width - 25; // magic
 
-  // Display the score label.
-  screen.setTextSize(1);
-  screen.stroke(text_r, text_g, text_b);
-  screen.text("score: ", screen_width - 60, 0);
-
-  screen.stroke(background_r, background_g, background_b);
-
-  // Dis where it's at, yo.
-  paddle_y = screen_height - (paddle_height * 2);
-
-  reset_bullet();
-  refresh_paddle();
-
-  reset_enemy();
-
-  state = state_playing;
+  set_up_playing();
 }
 
 void loop()
@@ -77,6 +70,62 @@ void loop()
 
 // ======================================================================
 
+void set_up_playing()
+{
+  // Black as the night.
+  screen.fillScreen(0);
+
+  // Display the score label.
+  screen.setTextSize(1);
+  screen.stroke(text_r, text_g, text_b);
+  screen.text("score: ", score_text_offset, 0);
+
+  screen.stroke(background_r, background_g, background_b);
+
+  score = 0;
+  score_previous = 0;
+
+  String(score).toCharArray(score_as_charray, score_charray_length);
+  String(score_previous).toCharArray(score_previous_as_charray, score_charray_length);
+
+  // Dis where it's at, yo.
+  paddle_y = screen_height - (paddle_height * 2);
+
+  reset_bullet();
+  refresh_paddle();
+
+  enemy_width = enemy_width_default;
+  enemy_height = enemy_height_default;
+
+  reset_enemy();
+  
+  current_game_start_millis = millis();
+
+  state = state_playing;
+}
+
+void set_up_game_over()
+{ 
+  // Just plain black.
+  screen.fillScreen(0);
+
+  String(high_score).toCharArray(high_score_as_charray, 4);
+
+  screen.stroke(text_r, text_g, text_b);
+
+  screen.setTextSize(1);
+  screen.text("You : ", 0, 0);
+  screen.text(score_as_charray, 35, 0);
+  screen.text("High: ", 0, 20);
+  screen.text(high_score_as_charray, 35, 20);
+
+  screen.setTextSize(2);
+
+  screen.text("Get ready!", 0, 40);
+
+  state = state_game_over;
+}
+
 void update_playing()
 {
   update_player();  
@@ -90,13 +139,20 @@ void update_playing()
 
   if (enemy_width <= 0 || enemy_height <= 0)
   {
-    set_game_over();
+    set_up_game_over();
   }
 
   update_score();
 
   // Slow down, son.
   delay(6);
+}
+
+void update_game_over()
+{
+  delay(game_over_screen_display_time);
+
+  set_up_playing();
 }
 
 void update_player()
@@ -113,10 +169,10 @@ void update_player()
 
 void update_score()
 {
-  // Update the score value.
+  // Update the score value. Score is as simple as millis() / 100.
   score_previous = score;
-  score = millis() / 1000;
-
+  score = (millis() - current_game_start_millis) / 100;
+  
   if (score != score_previous) 
   {
     refresh_score();
@@ -142,11 +198,6 @@ void refresh_score()
   screen.stroke(background_r, background_g, background_b);  
 }
 
-void update_game_over()
-{
-
-}
-
 // ========================================================================
 
 void move_player()
@@ -156,7 +207,7 @@ void move_player()
     refresh_paddle();
   }
 
-  // Can only be one at a time. Sorry.
+  // Can only be one at a time.
   if (stick_is_left())
   {
     move_left();
@@ -255,8 +306,8 @@ void check_bullet_collision()
   {
     reset_bullet();
     reset_enemy();
-    enemy_width -= 5;
-    enemy_height -= 5;
+    enemy_width -= enemy_width; // Todo change to 5
+    enemy_height -= enemy_height; // Todo change to 5
   }
 }
 
@@ -326,9 +377,6 @@ boolean enemy_is_hit()
     && (bullet_y + bullet_height <= enemy_y + enemy_height || bullet_y - bullet_speed + bullet_height <= enemy_y + enemy_height);
 }
 
-void set_game_over()
-{
-  state = state_game_over;
-}
+
 
 
