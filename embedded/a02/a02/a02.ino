@@ -10,7 +10,9 @@ short screen_width, screen_height;
 
 // Game stuff.
 byte state;
-short score, score_previous, high_score = 12; // TODO don't set this manually.
+short score, score_previous, high_score;
+
+char *file_path = "scores.txt";
 
 long current_game_start_millis = 0;
 
@@ -50,34 +52,43 @@ void setup()
     return;
   }
 
-  char *file_path = "scores.txt";
+  File file_high_score;
 
-  File file_high_score = SD.open(file_path, FILE_WRITE);
-
-  if (file_high_score)
+  if (SD.exists(file_path))
   {
-    if (SD.exists(file_path))
-    {
-      // Get the existing high score.
-      String high_score_as_string = file_high_score.readStringUntil('\n');
-      high_score_as_string.toCharArray(high_score_as_charray, score_charray_length);
-      high_score = atoi(high_score_as_charray);
-    }
-    else
-    {
-      // Default high score to 999
-      high_score = 999;
-      file_high_score.println("999");
-    }
+    Serial.println("High score file exists. Reading score...");
     
-    file_high_score.close();
+    file_high_score = SD.open(file_path); // read
+    
+    // Get the existing high score.
+    String high_score_as_string = file_high_score.readStringUntil('\n');
+    high_score_as_string.toCharArray(high_score_as_charray, score_charray_length);
+    high_score = atoi(high_score_as_charray);
+
+    Serial.print("High score read: ");
+    Serial.println(high_score);
+    
+    // Make sure the file is formatted properly. If not, reset it.
+    if (high_score == 0)
+    {
+      SD.remove(file_path);
+      file_high_score = SD.open(file_path, FILE_WRITE);
+      file_high_score.println("default_high_score");
+      high_score = default_high_score;
+    }
   }
   else
   {
-    Serial.print("Could not open the file ");
-    Serial.println(file_path);
-    return;
+    Serial.println("File did not exist. Creating it with default high score default_high_score...");
+        
+    file_high_score = SD.open(file_path, FILE_WRITE);
+    
+    // Default high score to default_high_score
+    high_score = default_high_score;
+    file_high_score.println("default_high_score");
   }
+
+  file_high_score.close();
 
   // Set up the screen.
   screen.begin();
@@ -148,6 +159,22 @@ void set_up_game_over()
   // Just plain black.
   screen.fillScreen(0);
 
+  if (score < high_score)
+  {
+    high_score = score;
+
+    SD.remove(file_path);
+
+    File file_high_score = SD.open(file_path, FILE_WRITE);
+
+    if (file_high_score)
+    {
+      file_high_score.println(high_score);
+    }
+
+    file_high_score.close();
+  }
+
   String(high_score).toCharArray(high_score_as_charray, 4);
 
   screen.stroke(text_r, text_g, text_b);
@@ -167,7 +194,7 @@ void set_up_game_over()
 
 void update_playing()
 {
-  update_player();  
+  update_player();
 
   update_enemy();
 
@@ -345,8 +372,8 @@ void check_bullet_collision()
   {
     reset_bullet();
     reset_enemy();
-    enemy_width -= enemy_width; // Todo change to 5
-    enemy_height -= enemy_height; // Todo change to 5
+    enemy_width -= enemy_width_shrinking;
+    enemy_height -= enemy_height_shrinking;
   }
 }
 
@@ -415,11 +442,5 @@ boolean enemy_is_hit()
     && (bullet_y >= enemy_y || bullet_y - bullet_speed >= enemy_y)
     && (bullet_y + bullet_height <= enemy_y + enemy_height || bullet_y - bullet_speed + bullet_height <= enemy_y + enemy_height);
 }
-
-
-
-
-
-
 
 

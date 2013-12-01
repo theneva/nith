@@ -29,6 +29,8 @@
 // Game stuff.
 #define game_over_screen_display_time 3000
 
+#define default_high_score 999
+
 #define state_playing 0
 #define state_game_over 1
 
@@ -49,4 +51,7 @@
 #define enemy_speed 2
 #define enemy_width_default 40
 #define enemy_height_default 40
+
+#define enemy_width_shrinking 5
+#define enemy_height_shrinking 5
 
